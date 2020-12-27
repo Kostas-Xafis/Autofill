@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script defer src="popup.js"></script>
+        <style defer href="pp.css"></style>
+    </head>
+    <body style="width: 200px; height: 200px">
+        <button id="scan"  style="background-color: goldenrod">First scan</button>        
+        <button id="sJson" style="background-color: indianred">Save changes</button>
+        <div>
+            <p>Select a user to fill his info:</p>
+            <select id="fNames">
+                <option >Select a name</option>
+            </select>
+            <button id="fill"  style="background-color: deepskyblue">Fill</button>
+        </div>
+        <div>
+            <p>Select a json key to change:</p>
+            <select id="cJson">
+                <option >Select a Key name</option>                
+            </select>
+            <button id="cJbut" style="background-color: lightgreen">Change</button>
+        </div>
+        <a style="display: none;" id="dJson" download="db.json"></a>        
+    </body>
+</html>
