@@ -12,7 +12,11 @@
         }
     ],
     "permissions": ["tabs"],
+<<<<<<< HEAD
     "browser_action": { 
+=======
+    "browser_action": {
+>>>>>>> 2d4c43716a6db3db3d019f1b3abbd578ed7cc466
         "default_popup": "popup.html",
         "default_title": "Form Autofiller"
     }
