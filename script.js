@@ -29,8 +29,6 @@ chrome.runtime.onMessage.addListener(req => {
             break;
         }
     } else if('fill' in req){
-        //Un-focus every input
-        unfocus();
         //Fill the inputs
         fill_inputs(req.fill);
     }
@@ -52,7 +50,7 @@ const scan_inputs = () =>{
     console.log("Forms :", form_inputs);
 
         // Giving each input a focus listener
-    form_inputs.forEach(form => Give_focus_listener(form));
+    form_inputs.forEach(form => Give_click_listener(form));
 }
 
 const pTags = ['div', 'p', 'table','tbody', 'tr', 'td', 'thead', 'th', 'ul', 'ol', 'li', 'dt', 'dl', 'span', 'fieldset']
@@ -77,15 +75,15 @@ const findInputs = (parent) => {
     }
 }
             //Change the users info names
-const input_focus_event = (id) => {
-    return new CustomEvent('input_focused', {detail: id})
+const input_click_event = (id) => {
+    return new CustomEvent('input_clicked', {detail: id})
 }
 
 const change_user_data = (key => {
     console.log('I am waiting for you to press an input element...');
 
         // Cant remove anonymous functions...
-    const EventHandler = async (e) => {
+    const EventHandler = (e) => {
         const inputId = e.detail;
         console.log(`Changed ${key} key with ${inputId}`)
 
@@ -93,24 +91,21 @@ const change_user_data = (key => {
             user_data[user][inputId] = user_data[user][key];
             delete user_data[user][key];
         }
-        console.log(user_data);
 
-        // If ((1)focus mode on -> (2)other input focus) will pass the (1) focused element 
-        document.getElementById(inputId).blur();
         //Remove handler
-        e.target.removeEventListener('input_focused', EventHandler);
+        e.target.removeEventListener('input_clicked', EventHandler);
     }
 
-    document.body.addEventListener('input_focused', EventHandler);
+    document.body.addEventListener('input_clicked', EventHandler);
 })
 
-const Give_focus_listener = ( (form) => {
-    form.forEach(input => input.addEventListener('focus', () => document.body.dispatchEvent(input_focus_event(input.id))))
+const Give_click_listener = ( (form) => {
+    form.forEach(input => input.addEventListener('click', () => document.body.dispatchEvent(input_click_event(input.id))))
 })
             //Filling the inputs
 const fill_inputs = (user) => {
     for(const key in user_data[user]){
-        let elem = document.getElementById(key);
+        let elem = document.getElementById(key)
         if(elem != null){
             const val = user_data[user][key];
             if(elem.tagName.toLowerCase() == 'input'){
@@ -120,8 +115,4 @@ const fill_inputs = (user) => {
             }
         }
     }
-}
-
-const unfocus = () => {
-    form_inputs.forEach(form => form.forEach(input => input.blur()));
 }
