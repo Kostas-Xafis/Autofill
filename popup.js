@@ -41,11 +41,11 @@ const sendmsg = (msg) => {
 }
             // Work with the popup html
     //Scan inputs
-document.getElementById("scan").addEventListener("click", async () => {
+document.getElementById("scan").addEventListener("click", () => {
     sendmsg({scan_inputs: true});
 })
     //Save new json
-document.getElementById("sJson").addEventListener("click", async () => {
+document.getElementById("sJson").addEventListener("click", () => {
 
     let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(users))
     let dbut = document.getElementById('dJson')
