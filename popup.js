@@ -45,14 +45,19 @@ document.getElementById("scan").addEventListener("click", () => {
     sendmsg({scan_inputs: true});
 })
     //Save new json
+let saves = 0;
 document.getElementById("sJson").addEventListener("click", () => {
+    let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(users, null, 2))
 
-    let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(users))
     let dbut = document.getElementById('dJson')
     dbut.setAttribute('href', dataStr)
+    let file_name = saves > 0 ? `db${saves}.json`: "db.json"
+    dbut.setAttribute('download', file_name);
 
     sendmsg({button: dbut, str: dataStr})
     dbut.click()
+
+    saves++;
 })
     //Change the Json names
 document.getElementById('cJbut').addEventListener('click', () => {
