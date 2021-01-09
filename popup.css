@@ -1,0 +1,15 @@
+:root {
+    font-family: monospace;
+}
+button {
+    border: none;
+    padding:5px;
+    margin-left:5px;
+    border-radius: 15px;
+    color:black !important;
+    transition: .5s opacity;
+}
+button:hover {
+    opacity: 1;
+    opacity: .5;
+}

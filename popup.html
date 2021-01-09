@@ -2,25 +2,33 @@
 <html>
     <head>
         <script defer src="popup.js"></script>
-        <style defer href="pp.css"></style>
+        <script defer src="events.js"></script>
+        <script defer src="fileSystem.js"></script>        
     </head>
-    <body style="width: 200px; height: 200px">
-        <button id="scan"  style="background-color: goldenrod">First scan</button>        
-        <button id="sJson" style="background-color: indianred">Save changes</button>
+    <body style="width: 300px; height: 200px">
+        <button id="scan"  style="background-color: goldenrod">Scan Inputs</button>        
+        <button id="sJson" style="background-color: paleturquoise">Save changes</button>
         <div>
-            <p>Select a user to fill his info:</p>
+            <p>Select your data to fill:</p>
             <select id="fNames">
-                <option >Select a name</option>
+                <option >Select</option>
             </select>
             <button id="fill"  style="background-color: deepskyblue">Fill</button>
         </div>
         <div>
             <p>Select a json key to change:</p>
-            <select id="cJson">
-                <option >Select a Key name</option>                
-            </select>
+            <div>
+                <select id="cJson">
+                    <option value="Select a Key name">Select a Key name</option>                
+                </select>
+                <select id="cJson_ind">
+                    <option >Select an Index</option>                
+                </select>
+            </div>
             <button id="cJbut" style="background-color: lightgreen">Change</button>
+            <button id="takeJson" style="background-color: pink">Upload Your Json Data</button>
+            <button id="delJbut" style="background-color: indianred">Delete your Json file</button>
         </div>
-        <a style="display: none;" id="dJson"></a>        
     </body>
+    <link rel="stylesheet" href="popup.css"></style>
 </html>

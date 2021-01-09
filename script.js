@@ -1,28 +1,20 @@
-let user_data = null;
-    
+/* Coming features: 1,2)undo, reset button for changes
+                    3)
+*/
 chrome.runtime.onMessage.addListener(req => {
     if('extensionloaded' in req){
         // Send a request to the popupjs to give you back the users info
-        if(user_data == null){
-            chrome.runtime.sendMessage({msg: 'page-loaded'})
-        } else {
-            chrome.runtime.sendMessage({msg: 'load-users', newUsers: user_data})
-        }
-    } else if('user_data' in req){
-        // Get the users info from popup.js
-        if(user_data == null){
-            user_data = req.user_data
-            console.log(user_data)
-        }
+        chrome.runtime.sendMessage({msg: "Ready", host: location.host, inputs: inputs})
     } else if('scan_inputs' in req){
         // Scan the inputs of the page    
-        scan_inputs()
+        scan_inputs()            
     } else if ('change' in req){
         // Change Json names of users info
-        let key = req.change;
+        // Keep this for now if anything goes wrong with indexing (pretty unlikely) 
+        let key = req.change
         for(let user in user_data){
             if(key in user_data[user]){
-                change_user_data(key);
+                change_user_data(key)
             } else {
                 console.log(`The ${key} key doesn't exist the user_data object`)
             }
@@ -30,7 +22,7 @@ chrome.runtime.onMessage.addListener(req => {
         }
     } else if('fill' in req){
         //Fill the inputs
-        fill_inputs(req.fill);
+        fill_inputs(req.fill)
     }
 })
             // Scanning inputs 
@@ -45,12 +37,21 @@ const scan_inputs = () =>{
     if(forms.length > 0){
         forms.forEach((form, ind) => form_inputs[ind] = findInputs(form).flat(Infinity))
     }
-    form_inputs.forEach((form, ind) => form_inputs[ind] = form.filter(input => input != null));
-
+    form_inputs.forEach((form, ind) => form_inputs[ind] = form.filter(input => {
+            // if the input isn't null and has an id
+            if(input != null){
+                if(input.id){
+                    return true
+                }
+            }
+        }));
+    form_inputs = form_inputs.filter(form => form.length > 0);
     console.log("Forms :", form_inputs);
 
         // Giving each input a focus listener
     form_inputs.forEach(form => Give_click_listener(form));
+        //Give each input it's own index
+    indexing();
 }
 
 const pTags = ['div', 'p', 'table','tbody', 'tr', 'td', 'thead', 'th', 'ul', 'ol', 'li', 'dt', 'dl', 'span', 'fieldset']
@@ -61,7 +62,9 @@ const findInputs = (parent) => {
     for(let i = 0; i < children.length; i++){
         let tag = children[i].tagName.toLowerCase()
         if(tag == 'input' || tag == 'select'){
-            arr.push(children[i])
+            if(children[i].style.display != "none" && children[i].type != "hidden"){
+                arr.push(children[i])
+            }
         } else if(pTags.findIndex(tagname => tagname == tag) >= 0){
             arr.push(findInputs(children[i]))
         } else {
@@ -84,21 +87,21 @@ const change_user_data = (key => {
 
         // Cant remove anonymous functions...
     const EventHandler = (e) => {
-        const inputId = e.detail;
+        const inputId = e.detail
         console.log(`Changed ${key} key with ${inputId}`)
 
         for(let user in user_data){            
-            user_data[user][inputId] = user_data[user][key];
-            delete user_data[user][key];
+            user_data[user][inputId] = user_data[user][key]
+            delete user_data[user][key]
         }
 
         //Remove handler
-        e.target.removeEventListener('input_clicked', EventHandler);
+        e.target.removeEventListener('input_clicked', EventHandler)
     }
 
-    document.body.addEventListener('input_clicked', EventHandler);
+    document.body.addEventListener('input_clicked', EventHandler)    
 })
-
+            //Give click listener to all inputs
 const Give_click_listener = ( (form) => {
     form.forEach(input => input.addEventListener('click', () => document.body.dispatchEvent(input_click_event(input.id))))
 })
@@ -115,4 +118,27 @@ const fill_inputs = (user) => {
             }
         }
     }
+}
+            // Giving every input of a form it's own index
+let inputs = [];
+const indexing = () => {
+    let i = 1;
+    form_inputs.forEach(form => form.forEach( input => {
+        if(input.id){
+            inputs.push({id:input.id, ind:i});
+            let index = `<span style='font-weight:bold'> (${i}) </span>`
+            let label_text = input.labels ? (input.labels[0] ? input.labels[0].innerHTML : '') : '';
+            if(label_text){
+                input.labels[0].innerHTML += index
+            }
+            let type = input.tagName.toLowerCase();
+            if(type === 'input'){
+                input.placeholder += `(${i})`
+            } else {
+                input.item(0).innerHTML += `(${i})`
+            }
+        }
+        i++;
+    }))
+    chrome.runtime.sendMessage({msg:"Input_ind", inputs: inputs})
 }
