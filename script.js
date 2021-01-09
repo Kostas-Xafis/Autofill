@@ -1,25 +1,10 @@
-/* Coming features: 1,2)undo, reset button for changes
-                    3)
-*/
 chrome.runtime.onMessage.addListener(req => {
     if('extensionloaded' in req){
-        // Send a request to the popupjs to give you back the users info
+        // Send a request to the popupjs to give you back some website info
         chrome.runtime.sendMessage({msg: "Ready", host: location.host, inputs: inputs})
     } else if('scan_inputs' in req){
         // Scan the inputs of the page    
-        scan_inputs()            
-    } else if ('change' in req){
-        // Change Json names of users info
-        // Keep this for now if anything goes wrong with indexing (pretty unlikely) 
-        let key = req.change
-        for(let user in user_data){
-            if(key in user_data[user]){
-                change_user_data(key)
-            } else {
-                console.log(`The ${key} key doesn't exist the user_data object`)
-            }
-            break;
-        }
+        scan_inputs()
     } else if('fill' in req){
         //Fill the inputs
         fill_inputs(req.fill)
@@ -77,34 +62,6 @@ const findInputs = (parent) => {
         return null
     }
 }
-            //Change the users info names
-const input_click_event = (id) => {
-    return new CustomEvent('input_clicked', {detail: id})
-}
-
-const change_user_data = (key => {
-    console.log('I am waiting for you to press an input element...');
-
-        // Cant remove anonymous functions...
-    const EventHandler = (e) => {
-        const inputId = e.detail
-        console.log(`Changed ${key} key with ${inputId}`)
-
-        for(let user in user_data){            
-            user_data[user][inputId] = user_data[user][key]
-            delete user_data[user][key]
-        }
-
-        //Remove handler
-        e.target.removeEventListener('input_clicked', EventHandler)
-    }
-
-    document.body.addEventListener('input_clicked', EventHandler)    
-})
-            //Give click listener to all inputs
-const Give_click_listener = ( (form) => {
-    form.forEach(input => input.addEventListener('click', () => document.body.dispatchEvent(input_click_event(input.id))))
-})
             //Filling the inputs
 const fill_inputs = (user) => {
     for(const key in user_data[user]){
