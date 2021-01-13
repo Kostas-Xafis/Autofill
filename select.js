@@ -50,11 +50,13 @@ template.innerHTML =
     }
     .opt {
         width:100%;
-        height:16px;        
-        text-align:center;  
+        height:16px;  
+        text-align:center;
     }
     .optT{
         align-self:center;
+        overflow-x:hidden;
+        text-overflow:ellipsis;
         transition: box-shadow 350ms;
     }
 </style>
@@ -86,7 +88,7 @@ class Select extends HTMLElement{
 
         this.shadowRoot.querySelector("#main").style.backgroundColor = this.dColor
         
-        this.itemSelected = 0
+        this.itemSelected = {}
         this.width = jQuery(this.shadowRoot.querySelector("#main")).width()
 
             //? Centering text position on init
@@ -152,7 +154,7 @@ class Select extends HTMLElement{
                     //Centering the text with the left property
                 picked.css("left", `${(((this.width - picked.width())/2)/this.width)*100}%`)
                     // A way to reference both the index and the actual option
-                this.itemSelected = {ind:ind+1, item: e.currentTarget}
+                this.itemSelected = {index:ind+1, item: e.currentTarget}
             })
             option.hover((e) => jQuery(e.target).css("box-shadow", "inset 0px 0px 5px 1px #00131a"),
                          (e) => jQuery(e.target).css("box-shadow", "inset 0px 0px 0px 0px #00131a"))

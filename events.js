@@ -13,25 +13,28 @@ $('#sJson').on("click", async() => {
     //Change the Json names
 let undoStack = [];    
 $('#cJbut').on('click', () => {
-        // The dropdown selection element
-    const inputDropdown = $('#cJson_ind')[0]
-    const keysDropdown  = $('#cJson')[0]
+        // The dropdown selection element 
+    const inputDropdown = $('#cJson_ind'),
+          keysDropdown  = $('#cJson')
         // The selected option
-    let selectedInput = inputDropdown.selectedOptions[0]
-    let selectedKey   = keysDropdown.selectedOptions[0]
+    let selectedInput = inputDropdown[0].itemSelected.item,
+        selectedKey   = keysDropdown[0].itemSelected.item
+
         // The keys to be changed
-    const oldKey = selectedKey.value
-    const newKey = selectedInput.id
+    const oldKey = selectedKey.getAttribute("keyName"),
+          newKey = selectedInput.id
 
     for(let data in jsonData){
         jsonData[data][newKey] = jsonData[data][oldKey]
         delete jsonData[data][oldKey]
     }
-    let prevKeyText = selectedKey.innerText
-    let keyIndex = keysDropdown.selectedIndex;
-    selectedKey.value = newKey;
+
+    let prevKeyText = selectedKey.children[0].innerText,
+        keyIndex = keysDropdown[0].itemSelected.index;
+    selectedKey.setAttribute("keyName", newKey);
+
         //Changing inner text for ui
-    selectedKey.innerText =`(${inputDropdown.selectedIndex}) ${keys[keyIndex - 1]}`;    
+    selectedKey.children[0].innerText =`(${inputDropdown[0].itemSelected.index}) ${keys[keyIndex - 1]}`;    
 
         //Saving changes in a stack for undo function
     undoStack[undoStack.length-1] = {"keys":[oldKey, newKey], "oldText":prevKeyText, "keyIndex": keyIndex} 

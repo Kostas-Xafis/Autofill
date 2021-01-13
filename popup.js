@@ -49,8 +49,8 @@ const changeKeysDropdown = () => {
     let $dp = jQuery($("#cJson")[0].shadowRoot.querySelector("#optBody"))
     for(const user in jsonData){
         for(const key in jsonData[user]){
-            // .opt, text-value=key
-            $('<div>').addClass("optT").text(key).appendTo($('<div>').addClass("opt").val(key).appendTo($dp))
+            // .opt, text-value=key            
+            $('<div>').addClass("optT").text(key).appendTo($('<div>').addClass("opt").attr("keyName", key).appendTo($dp))
         }
         break
     }
@@ -60,7 +60,7 @@ const changeKeysDropdown = () => {
 const createIndexDropdown = (inputs) =>{
     let $dp = jQuery($("#cJson_ind")[0].shadowRoot.querySelector("#optBody"))
     for(const input of inputs){
-        $("<div>").addClass("optT").text(`(${input.ind})` + (input.id.length < 20 ? ` ${input.id}` : ""))
+        $("<div>").addClass("optT").text(`(${input.ind}) ${input.id}`)
                   .appendTo($("<div>").addClass("opt").attr("id", input.id).appendTo($dp));
     }
     fillEvent($dp)
