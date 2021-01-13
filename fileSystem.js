@@ -1,18 +1,7 @@
 const errorhandler = (err) => {    
     console.error(err);
 }
-const callFS = (handler) => window.webkitRequestFileSystem(PERSISTENT, 1024*1024*16, handler, errorhandler);    
-    //This function works like w+ (rewrites or creates)
-const createFile = (data) => {
-    return callFS((fs) => {
-        fs.root.getFile(`db_${hostname}.json`, {create: true}, (fileEntry) => {
-            fileEntry.createWriter( (fileWriter) => {
-                let fileData = new Blob([data], {type: "application/json"})
-                fileWriter.write(fileData)
-            }, errorhandler)
-        }, errorhandler)
-    })
-}
+const callFS = (handler) => window.webkitRequestFileSystem(PERSISTENT, 1024*1024*128, handler, errorhandler);        
     //Check if a json file exists for this website
 const checkFileExist = () => {
     return new Promise((resolve, reject) => callFS((fs) => {
@@ -24,9 +13,36 @@ const checkFileExist = () => {
                     break;
                 }
             }
-            exists ? resolve("Found Json file") : reject("No registered Json file for this website")
+            exists ? resolve(true) : resolve(false)
         }, errorhandler)
     }))
+}
+    //This function works like w+ (rewrites or creates)
+const createFile = async (data) => {
+    /*  Deleting the file first and recreating it later 
+        because the createWriter just changes the bytes of the file and doesn't 
+        rewrite it.😢 
+    */
+    //Checking if the file exists in the first place
+    await checkFileExist().then(async (res) => {
+        res ? await deleteJson() : null;
+    })
+    await new Promise((resolve, reject) => callFS((fs) => {
+        fs.root.getFile(`db_${hostname}.json`, {create: true}, (fileEntry) => {
+            fileEntry.createWriter( (fileWriter) => {
+                let fileData = new Blob([data], {type: "application/json"})
+                fileWriter.onwriteend = () => {
+                    console.log("Saved file succesfully")
+                    resolve();
+                }
+                fileWriter.onerror = (e) => {
+                    console.error("An error occured:" + e.target.error)
+                    reject();
+                }
+                fileWriter.write(fileData)                         
+            }, errorhandler)
+        }, errorhandler)
+    }));
 }
     //Receive the JSON data from the file, if it exists
 const getFileJson = () => {
@@ -35,10 +51,10 @@ const getFileJson = () => {
             fileEntry.file( (file) => {
                 let fileReader = new FileReader();
                 fileReader.onerror = (e) => {
-                    reject("There was an internal error, try to re-open the extension")
+                    reject(`There was an internal error: ${e.target.error}, try to re-open the extension`)
                 }
                 fileReader.onloadend = (e) => {
-                    users = JSON.parse(e.target.result);
+                    jsonData = JSON.parse(e.target.result);
                     resolve();
                 }
                 fileReader.readAsText(file)
@@ -48,16 +64,20 @@ const getFileJson = () => {
 }
     //Overly complicated way to get json data from a file picker...
 const getJson = async() => {
-    [fileHandle] = await window.showOpenFilePicker()
+    [fileHandle] = await window.showOpenFilePicker({types:[{accept:{"application/json":[".json"]}}]})
     const fileData = await fileHandle.getFile()
     await new Promise( (resolve, reject) => {
         let dataReader = new FileReader()
         dataReader.onerror = (e) => {
-            console.errot(e.target.result)
+            console.warn(e.target.result)
+            reject()
+        }
+        dataReader.onabort = (e) => {
+            console.warn(e.target.result)
             reject()
         }
         dataReader.onloadend = (e) => {
-            users = JSON.parse(e.target.result)
+            jsonData = JSON.parse(e.target.result)
             resolve()
         } 
         dataReader.readAsText(fileData);
@@ -65,10 +85,15 @@ const getJson = async() => {
 }
 
 const deleteJson = () => {
-    return callFS( (fs) => {
+    return new Promise( (resolve, reject) => callFS( (fs) => {
         fs.root.getFile(`db_${hostname}.json`, {}, (fileEntry) => {
             let filename = fileEntry.name
             fileEntry.remove(() => console.log(`Removed ${filename} succesfully`));
+            resolve(true);
+        }, (err) => {
+            console.log(err)
+            resolve(false)
         })
-    })
+    }))
 }
+console.log("everything loaded")

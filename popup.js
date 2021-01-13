@@ -1,21 +1,32 @@
-let users
+let jsonData
+let keys
 let hostname = ""
             // Get user info Json file
-const pageLoaded = chrome.runtime.onMessage.addListener((message, sender, response) => {         
-    if(message.msg === "Ready"){
-        // Later you will need to keep the host name for redirects from the website
+const pageLoaded = chrome.runtime.onMessage.addListener(message => {         
+    if(message.msg === "Ready"){        
         hostname = (message.host).replaceAll(".", "")
-        // Getting the registered data (if they exist)
+        //  Getting the registered data (if they exist)
         checkFileExist().then( res =>{ 
-            console.log(res);           
-            getFileJson().then(() => {
-                changeNamesDropdown()
-                changeKeysDropdown()
-            }).catch(err => console.error(err)) 
-        }).catch(err => console.error(err));
-
+            if(res){
+                console.log("Found json file")
+                getFileJson().then(() => {
+                    storeKeys();
+                    changeNamesDropdown()
+                    changeKeysDropdown()
+                }).catch(err => console.error(err)) 
+            }else{
+                console.warn("There is no registered json file for this website")
+            }            
+        })
+        if(message.inputs){
+            createIndexDropdown(message.inputs)
+            // inputs for the all_data object
+            sel_index = message.inputs
+        }
+    } else if(message.msg === "Input_ind"){
         createIndexDropdown(message.inputs)
-    }
+        sel_index = message.inputs
+    }        
     chrome.runtime.onMessage.removeListener(pageLoaded)
 })
 
@@ -24,36 +35,48 @@ const sendmsg = (msg) => {
         chrome.tabs.sendMessage(tabs[0].id, msg);
     })
 }
-            // Make selection inputs 
+            // Make selection options 
     //User's info to fill
 const changeNamesDropdown = () => {
-    let elem = document.getElementById('fNames')
-    for(const user in users){
-        var opt = document.createElement('option');
-        opt.innerHTML = user
-        elem.appendChild(opt)
+    let $dp = jQuery($("#fNames")[0].shadowRoot.querySelector("#optBody"))
+    for(const user in jsonData){
+        $('<div>').addClass("optT").text(user).appendTo($("<div>").addClass("opt").val(user).appendTo($dp))
     }
+    fillEvent($dp)
 }
-    //Object Key name to change
+    //Json Key name to change
 const changeKeysDropdown = () => {
-    let dropdown = document.getElementById('cJson')
-    for(const user in users){
-        for(let key in users[user]){
-            var opt = document.createElement('option');
-            opt.innerHTML = key
-            opt.value = key
-            dropdown.appendChild(opt)
+    let $dp = jQuery($("#cJson")[0].shadowRoot.querySelector("#optBody"))
+    for(const user in jsonData){
+        for(const key in jsonData[user]){
+            // .opt, text-value=key
+            $('<div>').addClass("optT").text(key).appendTo($('<div>').addClass("opt").val(key).appendTo($dp))
         }
-        break;
+        break
     }
+    fillEvent($dp)
+}
+    //Index of inputs dropdown
+const createIndexDropdown = (inputs) =>{
+    let $dp = jQuery($("#cJson_ind")[0].shadowRoot.querySelector("#optBody"))
+    for(const input of inputs){
+        $("<div>").addClass("optT").text(`(${input.ind})` + (input.id.length < 20 ? ` ${input.id}` : ""))
+                  .appendTo($("<div>").addClass("opt").attr("id", input.id).appendTo($dp));
+    }
+    fillEvent($dp)
 }
 
-const createIndexDropdown = (inputs) =>{
-    let dropdown = document.getElementById("cJson_ind")
-    for(let input of inputs){
-        let opt = document.createElement("option")
-        opt.id = input.id
-        opt.innerHTML = `(${input.ind})` + (input.id.length < 20 ? ` ${input.id}` : "")
-        dropdown.appendChild(opt);
+const removeDropdown = (id) => {
+    let $dp = $(id)
+    emptyEvent($dp)
+}
+
+const storeKeys = () => {
+    keys = [];
+    let arrData = Object.entries(jsonData);    
+    for(const data of arrData){
+        for(const datakey in data[1]){
+            keys.findIndex(key => key === datakey) == -1 ? keys.push(datakey) : false;
+        }
     }
 }

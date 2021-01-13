@@ -1,34 +1,59 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script defer src="jQuery.js"></script>
         <script defer src="popup.js"></script>
         <script defer src="events.js"></script>
-        <script defer src="fileSystem.js"></script>        
+        <script defer src="select.js"></script>        
+        <script defer src="cssEvents.js"></script>
+        <script defer src="fileSystem.js"></script>            
     </head>
-    <body style="width: 300px; height: 200px">
-        <button id="scan"  style="background-color: goldenrod">Scan Inputs</button>        
-        <button id="sJson" style="background-color: paleturquoise">Save changes</button>
-        <div>
-            <p>Select your data to fill:</p>
-            <select id="fNames">
-                <option >Select</option>
-            </select>
-            <button id="fill"  style="background-color: deepskyblue">Fill</button>
+    <body style="width: 300px; height: 300px">
+        <div class="rows" id="Row1">
+            <button id="scan">
+                <div class="actual">
+                    <div>Scan Inputs</div>
+                </div>
+            </button>        
+            <button id="sJson">
+                <div class="actual">
+                    <div>Save Changes</div>
+                </div>
+            </button>
         </div>
-        <div>
-            <p>Select a json key to change:</p>
-            <div>
-                <select id="cJson">
-                    <option value="Select a Key name">Select a Key name</option>                
-                </select>
-                <select id="cJson_ind">
-                    <option >Select an Index</option>                
-                </select>
+        <div class="rows" id="Row2">
+            <div class="SelectP"><p>Select your data to fill:</p></div>
+            <div id="selData">
+                <button id="fill">Fill</button>
+                <select-pro id="fNames" placeholder="Select your Data" dColor="transparent" lColor="#007da7"></select-pro>
             </div>
-            <button id="cJbut" style="background-color: lightgreen">Change</button>
-            <button id="takeJson" style="background-color: pink">Upload Your Json Data</button>
-            <button id="delJbut" style="background-color: indianred">Delete your Json file</button>
+        </div>
+        <div class="rows" id="Row3">            
+            <div class="SelectP"><p>Select a json key to change:</p></div>
+            <div id="SelectCh">
+                <select-pro id="cJson" placeholder="Select a Key" dColor="#26b060" lColor="#36d478"></select-pro>
+                <select-pro id="cJson_ind" placeholder="Select an Input" dColor="#b64c1e" lColor="#d56b3d"></select-pro>                
+            </div>
+        </div>
+        <div class="rows" id="Row4">
+            <button id="cJbut">
+                <div class="actual">
+                    <div>Change</div>
+                </div>
+            </button>
+        </div>
+        <div class="rows" id="Row5">
+            <button id="takeJson">
+                <div class="actual">
+                    <div>Upload your Json Data</div>
+                </div>
+            </button>
+            <button id="delJbut">
+                <div class="actual">
+                    <div>Delete your Json Data</div>
+                </div>
+            </button>
         </div>
     </body>
-    <link rel="stylesheet" href="popup.css"></style>
+    <link rel="stylesheet" href="popup.css"></style>    
 </html>

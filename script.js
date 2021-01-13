@@ -30,11 +30,7 @@ const scan_inputs = () =>{
                 }
             }
         }));
-    form_inputs = form_inputs.filter(form => form.length > 0);
-    console.log("Forms :", form_inputs);
-
-        // Giving each input a focus listener
-    form_inputs.forEach(form => Give_click_listener(form));
+    form_inputs = form_inputs.filter(form => form.length > 0);    
         //Give each input it's own index
     indexing();
 }
@@ -63,11 +59,11 @@ const findInputs = (parent) => {
     }
 }
             //Filling the inputs
-const fill_inputs = (user) => {
-    for(const key in user_data[user]){
+const fill_inputs = (data) => {
+    for(const key in data){
         let elem = document.getElementById(key)
         if(elem != null){
-            const val = user_data[user][key];
+            const val = data[key];
             if(elem.tagName.toLowerCase() == 'input'){
                 elem.value = val
             } else {
