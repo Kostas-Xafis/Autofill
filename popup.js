@@ -1,98 +1,92 @@
-let users;
+let jsonData,
+    inputs,
+    temp_ki_pairs = {},
+    file_loc = "";
             // Get user info Json file
-const page_loaded = chrome.runtime.onMessage.addListener( async (message, sender, response) => {
-    if(message.msg == 'page-loaded'){ 
-        users = await getUsers()        
-        sendmsg({user_data: users})        
-    } else if(message.msg == 'load-users'){
-        users = message.newUsers
-    }
-    changeNamesOpt();
-    changeKeysOpt();
-    chrome.runtime.onMessage.removeListener(page_loaded);
-})
-
-window.addEventListener('load', () => {
-    sendmsg({extensionloaded: true});
-})
-
-const getUsers = () => {
-    return new Promise( (resolve, reject) => {
-        let request = new XMLHttpRequest()
-        request.open('get', chrome.extension.getURL('/db.json'), true)
-
-        request.responseType = 'json'
-        request.setRequestHeader("Content-Type", "application/json")
-        request.onload = () => {    
-            if(request.status >= 400){
-                reject(request.response)
-            } else {
-                resolve(request.response)
-            }
+chrome.runtime.onMessage.addListener(async (message) => {         
+    if(message.msg === "Ready"){
+        file_loc = `/db_${hostname.replaceAll(".", "")}.json`;      
+        keepIndexes()
+        //*Getting any the registered data        
+        try{
+            if(!userCache?.hasFile) throw new Error("There is now file")
+            console.log("Found json file")
+            await getFileJson(file_loc)
+            create_new_dps()
+        } catch(err){
+            $("#uData").css("--gtr", "100%")
+            $("#uData .title").css({display:"none"})
+            $("#fill_ul, #uData ul").css("align-content", "initial")
+            console.log(err)
         }
-        request.send()
-    })
-}
+    } else if(message.msg === "Input_ind"){
+        createIndexDropdown(message.inputs)
+    }    
+    console.log(message.msg)
+})
 
 const sendmsg = (msg) => {
     chrome.tabs.query({currentWindow:true, active:true}, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, msg);
+        chrome.tabs.sendMessage(tabs[0].id, msg)
     })
 }
-            // Work with the popup html
-    //Scan inputs
-document.getElementById("scan").addEventListener("click", () => {
-    sendmsg({scan_inputs: true});
-})
-    //Save new json
-let saves = 0;
-document.getElementById("sJson").addEventListener("click", () => {
-    let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(users, null, 2))
-
-    let dbut = document.getElementById('dJson')
-    dbut.setAttribute('href', dataStr)
-    let file_name = saves > 0 ? `db${saves}.json`: "db.json"
-    dbut.setAttribute('download', file_name);
-
-    sendmsg({button: dbut, str: dataStr})
-    dbut.click()
-
-    saves++;
-})
-    //Change the Json names
-document.getElementById('cJbut').addEventListener('click', () => {
-    const key = document.getElementById('cJson').selectedOptions[0].innerText
-    if(key.search(/^Select a/g) == -1){
-        sendmsg({change: key});
-    }
-})
-    //Fill the inputs
-document.getElementById('fill').addEventListener('click', () => {
-    const name = document.getElementById('fNames').selectedOptions[0].innerText
-    if(name.search(/^Select a/g) == -1){
-        sendmsg({fill: name})
-    }
-})
-
-            // Make selection inputs
+    //Creating a port listener to open a connection with the script.js
+chrome.runtime.onConnect.addListener( port => {})
+            //*Create selection options 
     //User's info to fill
-const changeNamesOpt = () => {
-    let elem = document.getElementById('fNames')
-    for(const user in users){    
-        var opt = document.createElement('option');
-        opt.innerHTML = user
-        elem.appendChild(opt)
+const changeNamesDropdown = () => {
+    const $dp = $("#fill_ul") 
+    let totalKeys = Object.values(jsonData).length;
+    if( totalKeys < 150){
+        for(const dataKey in jsonData)
+            if(dataKey != "ki_pairs")
+                $('<p>').text(dataKey).appendTo($("<li>").addClass("fill_li").appendTo($dp))
+    } else {
+        let txt = ""
+        for(const dataKey in jsonData)
+            if(dataKey != "ki_pairs")
+                txt += `<li class="fill_li"><p>${dataKey}</p></li>`;
+        
+        $dp.html($dp.html() + txt);
     }
+    $(".fill_li").fadeOut(10).each((ind,elem) => $(elem).fadeIn(get_fade_in_rate(ind+1)))    
+    clickListeners()
 }
-    //Object Key name to change
-const changeKeysOpt = () => {
-    let elem = document.getElementById('cJson')
-    for(const user in users){
-        for(let key in users[user]){
-            var opt = document.createElement('option');
-            opt.innerHTML = key
-            elem.appendChild(opt)
-        }
-        break;
+    //Json Key name to change
+const changeKeysDropdown = () => {
+    let $dp = $("#uData ul")
+    let totalKeys = Object.values(jsonData.ki_pairs).length
+    if(totalKeys < 150)
+        for (const key in jsonData.ki_pairs)
+            $('<p>').text(key).appendTo($('<li>').addClass("keys_li").appendTo($dp))
+    else {
+        let txt = ""
+        for(const key in jsonData.ki_pairs)
+            txt += `<li class="keys_li"><p>${key}</p></li>`;
+        $dp.html($dp.html() + txt);
     }
+    optListeners()    
+    get_cssRule(".changeCol ul li").style.maxWidth = `${($("body").width()-37)/2}px`
+    $(".keys_li").fadeOut(10)
+}
+    //Index of inputs dropdown
+const createIndexDropdown = inputsArr => {
+    inputs = inputsArr
+    let $dp = $("#indexes ul")
+    Object.entries(inputsArr).forEach(([i, {id, index}]) => {
+       let p = $("<p>").addClass("index").text(`${index}.`).appendTo($('<li>').appendTo($dp)) 
+       p.after($("<p>").text(userCache?.changes?.[i] ? userCache.changes[i] : ""))
+       $("<img>").appendTo($("<div>").appendTo(p.parent()));
+    })
+    $("#indexes ul li").fadeOut(10)
+
+    trash_slide()
+}
+
+const removeDropdown = list => {
+    $(list).remove();
+}
+
+const keepIndexes = () => {
+    sendmsg({"keepIndexes": userCache.kIndexes})
 }

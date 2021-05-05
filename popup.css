@@ -1,0 +1,793 @@
+/** ----------
+ *? Global css
+ ** ---------- */
+
+/** consider using text-shadow way more because it really improves readability*/
+
+:root {
+    --shadow-main: rgba(30, 30, 30, 0.5);    
+    --main-col-rgb: 240, 108, 0;
+    --main-col: #ef6c00;
+    /* --dkbg-col: #212121;
+    --txt-col: #eee;
+    --txt-s-col: black; */
+    --txt-shd-col: 0 0 0
+    /* *in some cases i need to make a font-weight variable 
+       *for dark and light theme because readability changes*/
+}
+
+.darkMode{
+    --dkbg-col: #212121;
+    --txt-col: #eee;
+    --txt-s-col: none;
+    --act-txt-col: white;
+}
+
+.whiteMode{
+    --dkbg-col: white; 
+    --txt-col: #212121; 
+    --txt-s-col: black;
+    --act-txt-col: var(--main-col);
+}
+
+body, div, button, select, p, span, input, img, table, ul, li{
+    margin:0px;
+    padding:0px;
+    cursor:default;
+}
+
+body{
+    background-color: var(--dkbg-col);
+    width: 400px; 
+    height: 350px;
+    display: grid;
+    grid-template-rows: 62px calc(100% - 62px);
+}
+
+#heightSlider {
+    z-index: 20;
+    position: absolute;
+    bottom:0px;
+    left:0px;
+    right:0px;
+    top:calc(100% - 5px);
+    background: transparent;
+    cursor: ns-resize;
+}
+
+/** ------------
+ *? Product Name 
+ ** ------------ */
+
+#Row0{    
+    grid-row:1;
+    width:100%;
+    height:60px;
+    display: flex;
+    flex-direction: row;
+    border-bottom: var(--main-col) solid 2px;
+    background-color: var(--dkbg-col);
+}
+
+#name {
+    width:100%;
+    text-align: center;
+    display:flex;
+}
+
+#name p {
+    color:var(--main-col);
+    align-self: center;
+    width:100%;
+    font-size:27px;
+    font-weight: 350;
+    letter-spacing: 1.5px;
+}
+
+/** ------------------
+ *? User Icon-Settings
+ ** ------------------ */
+
+#userIcon {
+    position:absolute;
+    top:10px;
+    left:10px;
+    right:350px;
+}
+
+#userIcon img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;    
+}
+
+#settsBgBlur {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    backdrop-filter: blur(4px);
+    z-index: -10;
+}
+
+#userSettings {
+    display: grid;
+    position: fixed;
+    top: 30px;
+    bottom: calc(100% - 30px);
+    left: 10%;
+    width: 80%;
+    height: calc(100% - 60px);
+    border-radius: 10px;
+    background-color: var(--dkbg-col);
+    grid-template-rows: 60px calc(100% - 60px);
+    box-shadow: 0px 0px 15px 10px rgba(var(--main-col-rgb), 0.4);
+    z-index: -10;
+    opacity: 0.01;
+}
+
+#settsMain {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 70% 25%;
+    align-content: center;
+    justify-items: center;
+    border-bottom: 1px solid var(--main-col);
+}
+
+#settsMain img {
+    aspect-ratio: 1/1;
+}
+
+
+#settsIcon {
+    display:none;
+}
+
+#login {
+    cursor: pointer;
+    width: 80%;
+    border-radius: 15px;
+    background-color: var(--main-col);
+    border: 2px solid var(--main-col);
+    display: flex;
+    justify-content: center;
+}
+
+#login:hover {
+    /* stripes */
+    background: repeating-linear-gradient(
+            -45deg, rgba(var(--main-col-rgb), 0.2), 
+            rgba(var(--main-col-rgb), 0.2) 10px,
+            transparent 10px, transparent 20px)
+}
+
+#login p {
+    cursor: pointer;
+    font-size: 24px;
+    color: white;
+    text-shadow: 1px 1px 2px rgb(0 0 0 / 70%);
+    height: 100%;
+    margin: auto;
+}
+
+#userName {
+    display:none;
+}
+
+#settings{
+    display: grid;
+    border-radius: 0px 0px 15px 15px;
+    grid-template-rows: repeat(3, 50px);
+    overflow-y:auto;
+
+}
+
+.setts_li {
+    background-color: var(--dkbg-col);
+    display: grid;
+    grid-template-columns: 40% 60%;
+    border-bottom: 1px solid var(--main-col);
+    justify-items: end;
+    align-content: center;
+}
+
+.setts_li p {
+    font-size: 20px;
+    color: var(--txt-col);
+    text-shadow: 1px 1px 1px rgb(var(--txt-shd-col) / 20%);
+}
+
+.swBody {
+    cursor: pointer;
+    margin:auto;
+    display: flex;
+    border-radius: 15px;
+    border: 2px solid var(--main-col);
+    background-color: transparent;
+    width: 35%;
+    height: 22px;
+}
+
+.swBody *{
+    cursor:pointer;
+}
+    /** i hate that the height is hardcoded, but % had some problems */
+.swTrack {
+    width: 30%;
+    height: 20px;
+    margin: auto 0 auto 1px;
+    border-radius: 15px;    
+    background-color: var(--main-col);
+    transition: width linear 500ms;
+}
+
+.swBall {
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    border: 1px solid var(--dkbg-col);
+    background-color: var(--main-col);    
+    margin-top: -2.5px;
+    margin-left: -1px;
+    box-shadow: -2px 0px 5px 1px rgb(33 33 33 / 40%)
+}
+
+.swTrack:hover {
+    background-color: rgba(var(--main-col-rgb), 0.4);
+}
+
+/** -------------
+ *? Actions Popup 
+ ** ------------- */
+
+#actions {
+    display: block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    left: 400px;
+    bottom: 0px;
+    z-index: 0;
+    will-change: left;
+    background: transparent;
+}
+
+#barImg{
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    top: 10px;
+    right: 25px;
+    left: 355px;
+    bottom: 310px;
+
+    width: 40px;
+    height: 40px;
+    z-index: 10;
+}
+#barImg * {
+    cursor: pointer;
+}
+#barImg img {
+    width: 30px;
+    align-self: center;
+}
+
+#openAct{
+    aspect-ratio: 4/3;    
+}
+#closeAct {
+    aspect-ratio: 1/1;
+    display: none;
+}
+
+#actions_body{
+    --action-theme-c: rgb(215,215,215);
+    display: grid;
+
+    width: 100%;
+    height: 100%;
+    grid-template-rows: repeat(4, 1fr);
+}
+
+.action {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--dkbg-col);
+    z-index: 0;
+    transition: background-color ease-out 500ms;
+}
+.action:not(:first-child){
+    border-top: 1px solid var(--action-theme-c);
+}
+
+.action:hover{
+    z-index: 1;
+    background-color: rgba(0,0,0,0);
+}
+
+.act_content {
+    --temp-cols: 25% 70%;
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: var(--temp-cols);
+    grid-template-rows: 100%;
+    align-items: center;
+}
+
+.action:nth-child(even) > .act_content{
+    --temp-cols: 75% 20%;
+}
+
+.act_content p {
+    color: var(--act-txt-col);
+    font-size: 22px;
+    text-align:center;
+    letter-spacing: 0.7px;
+    font-weight: 600;
+    text-shadow: 1px 1px 1px rgb(0 0 0 / 20%)
+}
+
+.act_content img {
+    display:flex;
+    margin:auto;
+    width:60px;
+    height:60px;
+}
+
+.action:hover p {
+    color: var(--dkbg-col);
+}
+
+@media screen and (max-height: 300px){
+    #actions_body {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+    .action:nth-child(even){
+        border-left: 1px solid var(--action-theme-c);
+    }
+    .action:nth-child(odd){
+        border-right: 1px solid var(--action-theme-c);
+    }
+    .action:nth-child(even) > .act_content {
+        --temp-cols: 25% 70%;        
+    }
+    .action:nth-child(even) > .act_content img{
+        grid-column:1;
+        grid-row:1;
+    }
+    .action:nth-child(even) > .act_content p{
+        grid-column:2;
+    }
+    .action:nth-child(odd) > .act_content {
+        --temp-cols: 25% 75%;
+    }
+    .action:nth-child(2) {
+        border-top: none;
+    }
+}
+
+/** --------------------------------
+ *? Actions Popup-Notification popup
+ ** -------------------------------- */
+
+#act_note {
+    position: absolute;
+    width:70%;
+    height:60%;
+    top:20%;
+    left:15%;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px 3px var(--shadow-main);
+    background: var(--main-col);
+
+    flex-wrap:wrap;
+    flex-direction: row;
+    text-align: center;
+    z-index: -10;
+}
+
+#note {
+    margin-top: 10%;
+    width: 100%;
+    height: 45%;
+    font-size: 16px;
+    font-weight: bold;
+    align-self: center;
+}
+
+#note_ans_cont {
+    width: 100%;
+    height: 25%;
+    display:flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    text-align:center;    
+}
+
+.note_ans {
+    border-radius: 15px;
+    height: 100%;    
+    display: flex;
+    flex-direction:column;
+    flex-wrap: wrap;
+    text-align: center;
+    align-self:center;
+    width: 35%;
+    background-color: transparent;
+    transition: background-color ease-out 700ms;  
+}
+#note_yes {
+    border: 2px solid lightgreen;
+}
+#note_yes:hover {
+    box-shadow: -1px 1px 4px 1px  var(--shadow-main);
+    background-color: lightgreen;
+}
+#note_no {
+    border: 2px solid indianred;
+}
+#note_no:hover {
+    box-shadow: 1px 1px 4px 1px  var(--shadow-main);
+    background-color: indianred;
+}
+
+#note_yes p, #note_no p{
+    margin:auto;
+    font-weight: 600;
+    font-size: 16px;
+    align-self: center;
+}
+/** -----------------------------------------
+ *? Background Blocking Actions & Blur effect
+ ** ----------------------------------------- */
+.backgr_block {
+    width: 100%;
+    height: 100%;
+    display: none;
+    background-color: transparent;
+    position: absolute;
+    top:0px;
+    left:0px;
+    z-index:13;
+    backdrop-filter: blur(3px);
+}
+
+/** ----------------
+ *? Main body layout
+ ** ----------------*/
+
+#main_body {
+    grid-row: 2;
+    display:grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: 35px calc(100% - 37px);
+    grid-auto-rows: 100%;
+    background-color: var(--dkbg-col)
+}
+
+#filler {
+    margin-left:2px;
+    width: 100%;
+    height: 100%;
+    display: grid;
+}
+
+#fill_ul {
+    height: 100%;
+    width: 100%;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    overflow-y: auto;
+}
+
+.fill_li {
+    --grad-perc: 100%;
+    width: 100%;
+    height: 45px;
+    max-height: 50px;
+    display:flex;
+    outline: 1px solid var(--main-col);
+    outline-offset: 0px;
+    transition: outline-offset 300ms ease-out;
+}
+
+.fill_li, .fill_li *{
+    cursor: pointer;
+} 
+
+.fill_li:hover,
+.fill_li:focus {
+    outline-offset: -6px;
+    animation: 300ms gradientFlow linear forwards;
+    background: linear-gradient(45deg, transparent, rgba(var(--main-col-rgb), 0.4) var(--grad-perc));
+}
+
+@property --grad-perc{
+    syntax: '<percentage>';
+    initial-value: 100%;
+    inherits: false;
+}
+
+@keyframes gradientFlow {
+    from {
+        --grad-perc:100%;
+    }
+    to {
+        --grad-perc:35%;
+    }
+}
+
+.fill_li p {
+    color:var(--txt-col);
+    margin: auto auto auto 15px;
+    text-overflow: clip;
+    font-size: 18px;
+}
+
+
+/** --------------------------
+ *? Changing data keys section
+ ** --------------------------*/
+
+#changes {
+    --changes-w: 35px;
+    --expanded: none;
+    grid-column: 1;
+    background: var(--dkbg-col);
+    border-right: 2px solid var(--main-col);    
+    height: 100%;
+    width: var(--changes-w);
+    display:flex;
+    flex-direction: row;
+    z-index: 5;    
+}
+
+#expand_arrow {
+    cursor: pointer;
+    height: 100%;
+    width: 35px;
+    display:flex;
+    transition: background-color linear 400ms;
+}
+
+#expand_arrow * {
+    cursor: pointer;
+}
+
+#expand_arrow:hover{
+    background-color: rgba(var(--main-col-rgb), 0.1)
+}
+
+#expand_arrow img {
+    margin: auto 0px auto -2.5px;
+    width: 40px;
+    height: 25px;
+    transform: rotateZ(90deg);
+}
+
+#changeSelect { 
+    width: calc(100% - 37px);
+    height: 100%;
+    display: var(--expanded);
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.changeCol {
+    --mheight: 30px;
+    --width: 150px;
+    --gtr: 25px calc(100% - 25px);
+    width:50%;
+    height:100%;
+    display: grid;
+    grid-template-rows: var(--gtr);
+}
+
+#indexes ul li {
+    display: grid;
+    grid-template-columns: 25% 75%;
+    overflow-x: hidden;
+}
+
+#indexes ul li div {
+    width: 0%;
+    display: none;
+    justify-self: end;
+    border-left: 1px solid white;
+    background-color: var(--dkbg-col);
+    box-shadow: 1px 0px 25px 15px rgba(var(--main-col-rgb), 0.5)
+}
+
+#indexes ul li div img {
+    align-self: center;
+    justify-self: center;
+    width: 80%;
+    aspect-ratio: 1/1;
+}
+
+.show_trash {
+    grid-template-columns: 25% 50% 25% !important;
+}
+
+.changeCol .title p{
+    padding: 0px;
+    width: auto;
+    font-size: 18px;
+    letter-spacing: 0.8px;
+    font-weight: 500;
+    color: var(--dkbg-col);
+    text-shadow: 1px 1px 1px rgb(0 0 0 / 20%)
+}
+
+.changeCol .title {
+    width: 100%;
+    display: flex;
+    background-color: var(--main-col);
+}
+
+.changeCol ul {
+    --curs: grab;
+    width: 100%;
+    display: grid;
+    grid-template-rows: auto;
+    overflow-y: auto;
+    align-content: start;
+}
+
+.changeCol ul li {    
+    width: 100%;
+    min-height: var(--mheight);
+    display: flex;
+    min-height: 40px;
+    border-top: 1px solid var(--main-col);
+    border-bottom: 1px solid var(--main-col);
+    background: var(--dkbg-col);
+    position: relative;
+}
+
+.keys_li,
+.keys_li *{
+    cursor: var(--curs);
+}
+
+.changeCol ul li:last-child:not(.dropBox) {
+    border-bottom-width: 1.5px;
+}
+
+.changeCol p{
+    margin: auto;
+    padding: 0 0 0 10px;
+    width: calc(100% - 10px);
+    letter-spacing: 0.8px;
+    font-size: 14px;
+    text-overflow: clip;
+    font-weight: 500;
+    color: var(--txt-col);
+}
+
+#indexes ul li p:not(.index){
+    padding: 0;
+    margin: auto 0 auto 0;
+}
+
+.keys_li:hover {
+    z-index: 5;
+    background: var(--main-col);
+}
+
+.keys_li:hover > p {
+    font-weight: 500;
+    color: var(--dkbg-col)
+}
+
+.dragged_li {
+    position: fixed !important;
+    z-index:10;
+}
+
+.drop_to_index{
+    background: var(--main-col) !important;
+}
+
+.drop_to_index p{
+    color: var(--dkbg-col);
+}
+    /** A drop box for empty lists*/
+.dropBox {
+    min-height: 260px !important;
+    border:none !important;
+    width: 100%;
+    display: none;
+    position: relative;
+    top: 0px;
+    left: 0px;
+}
+
+.innerDBox {
+    margin: auto;
+    width:90%;
+    height:90%;
+    border-radius: 10px;
+    border: 2px dashed var(--main-col);
+    background-color: rgba(var(--main-col-rgb), 0.1);
+    display: flex;
+}
+    /** Added another div to make it scrollabe because the image is blocking*/
+.innerDBox div{
+    width: 100%;
+    height:100%;
+    display:flex;
+    z-index: 1;
+}
+
+.innerDBox p {
+    margin: auto;
+    font-size: 38px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    z-index: 1;
+    color: var(--main-col);
+    text-shadow: 1px 1px 2px black;
+}
+
+.dropBox img {
+    z-index: 0;
+    width: 280px;
+    position: absolute;
+    top:0px;
+    left: 11.25%; 
+}
+
+.smallDropBox {
+    max-height: none !important;
+}
+
+.smallDropBox p {
+    padding: 0;
+    font-size:22px;
+    text-align: center;
+}
+
+.smallDropBox img {
+    top: 50px;
+    left: 0%;
+    width: 100%;
+}
+
+::-webkit-scrollbar{
+    width:5px;
+}
+::-webkit-scrollbar-button{
+    display: none;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(211, 211, 211, 0.5);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--main-col);    
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#uData ul li:nth-child(2),
+#indexes ul li:first-child{
+    border-top: none;
+}
+
+#login p, #name p, #actions p,
+.title, img, .innerDBox div p,
+.setts_li p {
+    user-select: none;
+}

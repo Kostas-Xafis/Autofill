@@ -1,113 +1,50 @@
-let user_data = null;
-    
+let scanned = false,
+    connected = false,
+    keepIndexes = false, //* comes in conflict with the function on the popup but it's just the editor 
+    port;
 chrome.runtime.onMessage.addListener(req => {
     if('extensionloaded' in req){
-        // Send a request to the popupjs to give you back the users info
-        if(user_data == null){
-            chrome.runtime.sendMessage({msg: 'page-loaded'})
-        } else {
-            chrome.runtime.sendMessage({msg: 'load-users', newUsers: user_data})
-        }
-    } else if('user_data' in req){
-        // Get the users info from popup.js
-        if(user_data == null){
-            user_data = req.user_data
-            console.log(user_data)
-        }
-    } else if('scan_inputs' in req){
-        // Scan the inputs of the page    
-        scan_inputs()
-    } else if ('change' in req){
-        // Change Json names of users info
-        let key = req.change;
-        for(let user in user_data){
-            if(key in user_data[user]){
-                change_user_data(key);
-            } else {
-                console.log(`The ${key} key doesn't exist the user_data object`)
-            }
-            break;
-        }
+        // Send a request to the popupjs to give it back some website info
+        chrome.runtime.sendMessage({msg: "Ready"})
     } else if('fill' in req){
         //Fill the inputs
-        fill_inputs(req.fill);
+        console.log('fill')
+        fill_inputs(req.fill)
+    } else if('keepIndexes' in req){
+        keepIndexes = req.keepIndexes
+    }
+    if(!connected){
+        port = chrome.runtime.connect({name:"something"})
+        connected = true
+        if(!keepIndexes)
+            indexing()
+
+        port.onDisconnect.addListener(() => {
+            console.log("Good bye extension!")
+            connected = false
+            if(!keepIndexes)
+                remove_indexing()
+        })
+        chrome.runtime.sendMessage({msg:"Input_ind", inputs: inputIds});
     }
 })
             // Scanning inputs 
-let form_inputs = []
-const scan_inputs = () =>{
-    let forms_obj = document.getElementsByTagName('form')
-    
-    let forms = Object.entries(forms_obj);
-    forms = forms.flat().filter(elem => typeof elem == 'object');
-
-    
-    if(forms.length > 0){
-        forms.forEach((form, ind) => form_inputs[ind] = findInputs(form).flat(Infinity))
-    }
-    form_inputs.forEach((form, ind) => form_inputs[ind] = form.filter(input => input != null));
-
-    console.log("Forms :", form_inputs);
-
-        // Giving each input a focus listener
-    form_inputs.forEach(form => Give_click_listener(form));
+let inputs = [],
+    inputIds = {};
+const get_inputs = () => {
+    let inp = [...document.querySelectorAll("input, select")];
+    inp = inp.filter(elem => elem.id !== '')
+    console.log(inp)
+    inputs = inp;
+    inputs.forEach((elem, ind) => inputIds[ind+1] = {id:elem.id, index:ind+1});
 }
 
-const pTags = ['div', 'p', 'table','tbody', 'tr', 'td', 'thead', 'th', 'ul', 'ol', 'li', 'dt', 'dl', 'span', 'fieldset']
-
-const findInputs = (parent) => {
-    let children = parent.children
-    let arr = []
-    for(let i = 0; i < children.length; i++){
-        let tag = children[i].tagName.toLowerCase()
-        if(tag == 'input' || tag == 'select'){
-            arr.push(children[i])
-        } else if(pTags.findIndex(tagname => tagname == tag) >= 0){
-            arr.push(findInputs(children[i]))
-        } else {
-            arr.push(null)
-        }
-    }
-    if(arr.length > 0){
-        return arr.slice()
-    } else {
-        return null
-    }
-}
-            //Change the users info names
-const input_click_event = (id) => {
-    return new CustomEvent('input_clicked', {detail: id})
-}
-
-const change_user_data = (key => {
-    console.log('I am waiting for you to press an input element...');
-
-        // Cant remove anonymous functions...
-    const EventHandler = (e) => {
-        const inputId = e.detail;
-        console.log(`Changed ${key} key with ${inputId}`)
-
-        for(let user in user_data){            
-            user_data[user][inputId] = user_data[user][key];
-            delete user_data[user][key];
-        }
-
-        //Remove handler
-        e.target.removeEventListener('input_clicked', EventHandler);
-    }
-
-    document.body.addEventListener('input_clicked', EventHandler);
-})
-
-const Give_click_listener = ( (form) => {
-    form.forEach(input => input.addEventListener('click', () => document.body.dispatchEvent(input_click_event(input.id))))
-})
             //Filling the inputs
-const fill_inputs = (user) => {
-    for(const key in user_data[user]){
-        let elem = document.getElementById(key)
+const fill_inputs = (data) => {
+    for(const id in data){
+        let elem = document.getElementById(id)
         if(elem != null){
-            const val = user_data[user][key];
+            const val = data[id];
             if(elem.tagName.toLowerCase() == 'input'){
                 elem.value = val
             } else {
@@ -115,4 +52,42 @@ const fill_inputs = (user) => {
             }
         }
     }
+    data = {};
 }
+            // Giving every input of a form it's own index
+const indexing = () => {    
+    inputs.forEach((input, ind) => {
+        if(input.id){
+            const i = ind + 1;
+            const label_text = input.labels ? (input.labels[0] ? input.labels[0].innerHTML : '') : '';
+            if(label_text){
+                input.labels[0].innerHTML += `<span style='font-weight:bold'> (${i}) </span>`
+            }
+            const type = input.tagName.toLowerCase();
+            if(type === 'input'){
+                input.placeholder += `(${i})`
+            } else {
+                input.item(0).innerText += `(${i})`
+            }
+        }
+    })
+}
+
+const remove_indexing = () => {
+    inputs.forEach( input => {
+        if(input.id){
+            const label_text = input.labels ? (input.labels[0] ? input.labels[0].innerText : '') : '';
+            if(label_text){
+                input.labels[0].querySelector("span").remove();
+            }
+            const type = input.tagName.toLowerCase();
+            if(type === 'input'){
+                input.placeholder = input.placeholder.replace(/[(]\d+[)]/g, '')
+            } else {
+                input.item(0).innerText = input.item(0).innerText.replace(/[(]\d+[)]/g, '')
+            }
+        }
+    })
+}
+
+get_inputs();

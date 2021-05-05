@@ -1,0 +1,6 @@
+* 1) Fix the notes popup
+
+                ? Payment System on the browser
+* https://stripe.com/docs/js/initializing Check it for the payment system
+* https://developer.visa.com/site/payment-methods Visa payment API
+* https://developer.mastercard.com/apis?categories=Payments MasterCard payment API

@@ -2,18 +2,20 @@
     "name": "form",
     "version": "1.0",
     "manifest_version": 2,
-    "web_accessible_resources": [
-        "db.json"
-    ],
     "content_scripts": [
         {
             "matches":["<all_urls>"],
             "js": ["script.js"]
         }
     ],
-    "permissions": ["tabs"],
+    "permissions": [
+        "tabs",
+        "unlimitedStorage",
+        "storage"
+    ],
     "browser_action": {
         "default_popup": "popup.html",
         "default_title": "Form Autofiller"
-    }
+    },
+    "content_security_policy": "default-src 'self' https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/ ; style-src 'unsafe-inline'"
 }
