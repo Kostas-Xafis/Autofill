@@ -10,10 +10,12 @@
     ],
     "permissions": [
         "tabs",
-        "unlimitedStorage"
+        "unlimitedStorage",
+        "storage"
     ],
     "browser_action": {
         "default_popup": "popup.html",
         "default_title": "Form Autofiller"
-    }
+    },
+    "content_security_policy": "default-src 'self' https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/ ; style-src 'unsafe-inline'"
 }

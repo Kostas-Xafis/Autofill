@@ -1,82 +1,92 @@
-let jsonData
-let keys
-let hostname = ""
+let jsonData,
+    inputs,
+    temp_ki_pairs = {},
+    file_loc = "";
             // Get user info Json file
-const pageLoaded = chrome.runtime.onMessage.addListener(message => {         
-    if(message.msg === "Ready"){        
-        hostname = (message.host).replaceAll(".", "")
-        //  Getting the registered data (if they exist)
-        checkFileExist().then( res =>{ 
-            if(res){
-                console.log("Found json file")
-                getFileJson().then(() => {
-                    storeKeys();
-                    changeNamesDropdown()
-                    changeKeysDropdown()
-                }).catch(err => console.error(err)) 
-            }else{
-                console.warn("There is no registered json file for this website")
-            }            
-        })
-        if(message.inputs){
-            createIndexDropdown(message.inputs)
-            // inputs for the all_data object
-            sel_index = message.inputs
+chrome.runtime.onMessage.addListener(async (message) => {         
+    if(message.msg === "Ready"){
+        file_loc = `/db_${hostname.replaceAll(".", "")}.json`;      
+        keepIndexes()
+        //*Getting any the registered data        
+        try{
+            if(!userCache?.hasFile) throw new Error("There is now file")
+            console.log("Found json file")
+            await getFileJson(file_loc)
+            create_new_dps()
+        } catch(err){
+            $("#uData").css("--gtr", "100%")
+            $("#uData .title").css({display:"none"})
+            $("#fill_ul, #uData ul").css("align-content", "initial")
+            console.log(err)
         }
     } else if(message.msg === "Input_ind"){
         createIndexDropdown(message.inputs)
-        sel_index = message.inputs
-    }        
-    chrome.runtime.onMessage.removeListener(pageLoaded)
+    }    
+    console.log(message.msg)
 })
 
 const sendmsg = (msg) => {
     chrome.tabs.query({currentWindow:true, active:true}, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, msg);
+        chrome.tabs.sendMessage(tabs[0].id, msg)
     })
 }
-            // Make selection options 
+    //Creating a port listener to open a connection with the script.js
+chrome.runtime.onConnect.addListener( port => {})
+            //*Create selection options 
     //User's info to fill
 const changeNamesDropdown = () => {
-    let $dp = jQuery($("#fNames")[0].shadowRoot.querySelector("#optBody"))
-    for(const user in jsonData){
-        $('<div>').addClass("optT").text(user).appendTo($("<div>").addClass("opt").val(user).appendTo($dp))
+    const $dp = $("#fill_ul") 
+    let totalKeys = Object.values(jsonData).length;
+    if( totalKeys < 150){
+        for(const dataKey in jsonData)
+            if(dataKey != "ki_pairs")
+                $('<p>').text(dataKey).appendTo($("<li>").addClass("fill_li").appendTo($dp))
+    } else {
+        let txt = ""
+        for(const dataKey in jsonData)
+            if(dataKey != "ki_pairs")
+                txt += `<li class="fill_li"><p>${dataKey}</p></li>`;
+        
+        $dp.html($dp.html() + txt);
     }
-    fillEvent($dp)
+    $(".fill_li").fadeOut(10).each((ind,elem) => $(elem).fadeIn(get_fade_in_rate(ind+1)))    
+    clickListeners()
 }
     //Json Key name to change
 const changeKeysDropdown = () => {
-    let $dp = jQuery($("#cJson")[0].shadowRoot.querySelector("#optBody"))
-    for(const user in jsonData){
-        for(const key in jsonData[user]){
-            // .opt, text-value=key            
-            $('<div>').addClass("optT").text(key).appendTo($('<div>').addClass("opt").attr("keyName", key).appendTo($dp))
-        }
-        break
+    let $dp = $("#uData ul")
+    let totalKeys = Object.values(jsonData.ki_pairs).length
+    if(totalKeys < 150)
+        for (const key in jsonData.ki_pairs)
+            $('<p>').text(key).appendTo($('<li>').addClass("keys_li").appendTo($dp))
+    else {
+        let txt = ""
+        for(const key in jsonData.ki_pairs)
+            txt += `<li class="keys_li"><p>${key}</p></li>`;
+        $dp.html($dp.html() + txt);
     }
-    fillEvent($dp)
+    optListeners()    
+    get_cssRule(".changeCol ul li").style.maxWidth = `${($("body").width()-37)/2}px`
+    $(".keys_li").fadeOut(10)
 }
     //Index of inputs dropdown
-const createIndexDropdown = (inputs) =>{
-    let $dp = jQuery($("#cJson_ind")[0].shadowRoot.querySelector("#optBody"))
-    for(const input of inputs){
-        $("<div>").addClass("optT").text(`(${input.ind}) ${input.id}`)
-                  .appendTo($("<div>").addClass("opt").attr("id", input.id).appendTo($dp));
-    }
-    fillEvent($dp)
+const createIndexDropdown = inputsArr => {
+    inputs = inputsArr
+    let $dp = $("#indexes ul")
+    Object.entries(inputsArr).forEach(([i, {id, index}]) => {
+       let p = $("<p>").addClass("index").text(`${index}.`).appendTo($('<li>').appendTo($dp)) 
+       p.after($("<p>").text(userCache?.changes?.[i] ? userCache.changes[i] : ""))
+       $("<img>").appendTo($("<div>").appendTo(p.parent()));
+    })
+    $("#indexes ul li").fadeOut(10)
+
+    trash_slide()
 }
 
-const removeDropdown = (id) => {
-    let $dp = $(id)
-    emptyEvent($dp)
+const removeDropdown = list => {
+    $(list).remove();
 }
 
-const storeKeys = () => {
-    keys = [];
-    let arrData = Object.entries(jsonData);    
-    for(const data of arrData){
-        for(const datakey in data[1]){
-            keys.findIndex(key => key === datakey) == -1 ? keys.push(datakey) : false;
-        }
-    }
+const keepIndexes = () => {
+    sendmsg({"keepIndexes": userCache.kIndexes})
 }

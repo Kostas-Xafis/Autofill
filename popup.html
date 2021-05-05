@@ -1,59 +1,142 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <script defer src="jQuery.js"></script>
+<html lang="en">
+    <head >
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width initial-scale=1">
+        <script src="pref.js"></script>
+        <script defer src="jQMin.js" id="jQ"></script>
+        <script defer src="fileSystem.js"></script>
         <script defer src="popup.js"></script>
         <script defer src="events.js"></script>
-        <script defer src="select.js"></script>        
         <script defer src="cssEvents.js"></script>
-        <script defer src="fileSystem.js"></script>            
     </head>
-    <body style="width: 300px; height: 300px">
-        <div class="rows" id="Row1">
-            <button id="scan">
-                <div class="actual">
-                    <div>Scan Inputs</div>
+    <body class="darkMode">
+        <div id="Row0">
+            <div id="userIcon">
+                <img src="/images/dark/user.png" alt="user icon">
+                <div id="settsBgBlur"></div>
+                <div id="userSettings">
+                    <div id="settsMain">
+                        <img id="settsIcon" src="" alt="user icon">
+                        <div id="login"><p>Sign In</p></div>
+                        <div id="userName"></div>
+                        <img src="/images/light/x.png" alt="close settings" id="closeSetts">
+                    </div>
+                    <ul id="settings">
+                        <li class="setts_li">
+                            <p>Keep indexes</p>
+                            <div class="swBody" id="kIndexes">
+                                <div class="swTrack">
+                                    <div class="swBall"></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="setts_li">
+                            <p>Dark mode</p>
+                            <div class="swBody" id="darkMode">
+                                <div class="swTrack">
+                                    <div class="swBall"></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="setts_li">
+                            <p>Auto close</p>
+                            <div class="swBody" id="autoClose">
+                                <div class="swTrack">
+                                    <div class="swBall"></div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
-            </button>        
-            <button id="sJson">
-                <div class="actual">
-                    <div>Save Changes</div>
+            </div>
+            <div id="name">
+                <p>AutoFill</p>
+            </div>
+            <div id="actions">
+                <div id="actions_body">
+                    <div class="action" id="act_Scan">
+                        <div class="act_content">
+                            <div>
+                            </div>
+                            <p></p>
+                        </div>
+                    </div> 
+                    <div class="action" id="act_Save">
+                        <div class="act_content">
+                            <p>Save Changes</p>
+                            <img src="images/main/save.png" alt="save icon">
+                        </div>
+                    </div> 
+                    <div class="action" id="act_Upload">
+                        <div class="act_content">
+                            <img src="images/main/upload.png" alt="">
+                            <p>Upload File</p>
+                        </div>
+                    </div>
+                    <div class="action" id="act_Del">
+                        <div class="act_content">
+                            <p>Delete Data</p>
+                            <img src="images/main/trash.png" alt="delete icon">
+                        </div>
+                    </div>
                 </div>
-            </button>
-        </div>
-        <div class="rows" id="Row2">
-            <div class="SelectP"><p>Select your data to fill:</p></div>
-            <div id="selData">
-                <button id="fill">Fill</button>
-                <select-pro id="fNames" placeholder="Select your Data" dColor="transparent" lColor="#007da7"></select-pro>
+                <div id="act_note">
+                    <p id="note"></p>
+                    <div id="note_ans_cont">
+                        <div class="note_ans" id="note_yes">
+                            <p></p>
+                        </div>
+                        <div class="note_ans" id="note_no">
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="backgr_block" id="bblock_popup"></div>
+                <div id="barImg">
+                    <img id="openAct"  src="images/light/bars.png" alt="">
+                    <img id="closeAct" src="images/light/x.png" alt="" >
+                </div>
             </div>
         </div>
-        <div class="rows" id="Row3">            
-            <div class="SelectP"><p>Select a json key to change:</p></div>
-            <div id="SelectCh">
-                <select-pro id="cJson" placeholder="Select a Key" dColor="#26b060" lColor="#36d478"></select-pro>
-                <select-pro id="cJson_ind" placeholder="Select an Input" dColor="#b64c1e" lColor="#d56b3d"></select-pro>                
+        <div id="main_body">
+            <div id="changes">
+                <div id="changeSelect">
+                    <div class="changeCol" id="uData">
+                        <div class="title"><p>Data keys</p></div>
+                        <ul>
+                            <li class="dropBox smallDropBox" >
+                                <div class="innerDBox">
+                                    <div>
+                                        <p>Drop your file</p>
+                                    </div>
+                                    <img src="images/dark/drop.png" alt="drop box">
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="changeCol" id="indexes">
+                        <div class="title"><p>Input indexes</p></div>
+                        <ul>
+                        </ul>
+                    </div>
+                </div>
+                <div id="expand_arrow"><img src="images/main/expand.png" alt=""></div> 
+            </div>
+            <div id="filler">
+                <ul id="fill_ul">
+                    <li class="dropBox">
+                        <div class="innerDBox">
+                            <div>
+                                <p>Drop your file</p>
+                            </div>
+                            <img src="images/dark/drop.png" alt="drop box">
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="rows" id="Row4">
-            <button id="cJbut">
-                <div class="actual">
-                    <div>Change</div>
-                </div>
-            </button>
-        </div>
-        <div class="rows" id="Row5">
-            <button id="takeJson">
-                <div class="actual">
-                    <div>Upload your Json Data</div>
-                </div>
-            </button>
-            <button id="delJbut">
-                <div class="actual">
-                    <div>Delete your Json Data</div>
-                </div>
-            </button>
-        </div>
+        <div id="heightSlider"></div>
     </body>
-    <link rel="stylesheet" href="popup.css"></style>    
+    <link rel="stylesheet" href="popup.css"></style>
 </html>
