@@ -77,13 +77,16 @@ const createIndexDropdown = inputsArr => {
 		let p = $("<p>").addClass("index").text(`${index}.`).appendTo(li.appendTo($dp));
 		p.after($("<p>").text(change));
 
+		//!Trash image
 		let img = $("<img>");
-		if (change != "") img.attr("src", "/images/main/trash.png");
-		img.appendTo($("<div>").appendTo(p.parent()));
+		let div = $("<div>").attr("data-ind", index);
+		img.appendTo(div.appendTo(p.parent()));
+		if (change != "") {
+			img.attr("src", "/images/main/trash.png");
+			addTrashListener(div[0]);
+		}
 	});
 	$("#indexes ul li").fadeOut(10);
-
-	// trash_slide();
 };
 
 const removeDropdown = list => {
