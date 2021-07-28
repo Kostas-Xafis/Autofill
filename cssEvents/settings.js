@@ -27,15 +27,9 @@ document.querySelector("#userIcon").addEventListener("click", OpenSettings);
 //! On Off switch
 function OnOfListener(e) {
 	const swBody = e.currentTarget,
-		swTrack = swBody.querySelector(".swTrack"),
-		isOn = Number(get_computed_style(swTrack, "opacity")) < 0.5 ? false : true,
-		ballKeyFrames = [{ transform: "translate(0px, -1.5px)" }, { transform: "translate(42px, -1.5px)" }],
-		trackKeyFrames = [{ opacity: "0.001" }, { opacity: "1" }];
-	console.log(isOn);
+		isOn = swBody.classList.contains("swTrackOpen");
 	swBody.removeEventListener("click", OnOfListener); //Removing the listener to prevent spam
-	const animOpts = { duration: 250, direction: isOn ? "reverse" : "normal", fill: "forwards" };
-	let ballAnim = swBody.querySelector(".swBall").animate(ballKeyFrames, animOpts);
-	swTrack.animate(trackKeyFrames, animOpts);
+	swBody.classList.toggle("swTrackOpen", !isOn);
 
 	//* Cache setting
 	if (swBody.id == "darkMode") {
@@ -58,6 +52,6 @@ function OnOfListener(e) {
 		extCache.autoClose = !isOn;
 		setCache("extCache");
 	}
-	ballAnim.finished.then(() => swBody.addEventListener("click", OnOfListener));
+	swBody.addEventListener("transitionend", () => swBody.addEventListener("click", OnOfListener));
 }
 document.querySelectorAll(".swBody").forEach(elem => elem?.addEventListener("click", OnOfListener));

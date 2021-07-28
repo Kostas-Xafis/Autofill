@@ -2,8 +2,6 @@
  *? Global css
  ** ---------- */
 
-/** consider using text-shadow way more because it really improves readability*/
-
 :root {
 	--shadow-main: rgba(30, 30, 30, 0.5);
 	--main-col-rgb: 240, 108, 0;
@@ -27,27 +25,24 @@
 	--act-txt-col: var(--main-col);
 }
 
-body,
-div,
-button,
-select,
-p,
-span,
-input,
-img,
-table,
-ul,
-li {
+* {
 	margin: 0px;
 	padding: 0px;
 	cursor: default;
 }
 
+img,
+p {
+	user-select: none;
+}
+
 body {
 	background-color: var(--bg-col);
 	width: 400px;
+	max-width: 400px;
 	height: 350px;
 	display: grid;
+	overflow-x: clip;
 	grid-template-rows: 62px calc(100% - 62px);
 }
 
@@ -110,10 +105,7 @@ body {
 
 #settsBgBlur {
 	position: fixed;
-	top: 0px;
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
+	inset: 0px;
 	backdrop-filter: blur(4px);
 	z-index: -10;
 }
@@ -225,11 +217,12 @@ body {
 .swTrack {
 	width: 100%;
 	height: 20px;
-	opacity: 0.001;
 	margin: auto 1px;
-	border-radius: 15px;
+
+	opacity: 0.001;
+	transition: opacity 500ms linear;
+	border-radius: 10px;
 	background-color: var(--main-col);
-	transition: width linear 500ms;
 }
 
 .swBall {
@@ -237,14 +230,24 @@ body {
 	height: 23px;
 	position: absolute;
 	transform: translate(0px, -1.5px);
+	transition: transform 500ms linear;
+
 	border-radius: 50%;
 	border: 1px solid var(--bg-col);
 	background-color: var(--main-col);
 	box-shadow: -2px 0px 5px 1px rgb(33 33 33 / 40%);
 }
 
-.swTrack:hover {
-	background-color: rgba(var(--main-col-rgb), 0.4);
+.swTrackOpen > .swTrack {
+	opacity: 1;
+}
+.swTrackOpen > .swBall {
+	transform: translate(42px, -1.5px);
+}
+
+.swTrackOpen:hover > .swTrack {
+	transition: unset;
+	opacity: 0.4;
 }
 
 /** -------------
@@ -254,12 +257,8 @@ body {
 #actions {
 	display: block;
 	position: absolute;
-	top: 0px;
-	right: 0px;
-	left: 400px;
-	bottom: 0px;
+	inset: 0px 0px 0px 400px;
 	z-index: 0;
-	will-change: left;
 	background: transparent;
 }
 
@@ -507,8 +506,10 @@ body {
 	height: 45px;
 	max-height: 50px;
 	display: flex;
+
 	outline: 1px solid var(--main-col);
 	outline-offset: 0px;
+	overflow-x: clip;
 	transition: outline-offset 300ms ease-out;
 }
 
@@ -797,14 +798,4 @@ body {
 #uData ul li:nth-child(2),
 #indexes ul li:first-child {
 	border-top: none;
-}
-
-#login p,
-#name p,
-#actions p,
-.title,
-img,
-.innerDBox div p,
-.setts_li p {
-	user-select: none;
 }

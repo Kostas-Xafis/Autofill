@@ -40,9 +40,14 @@ class ChangesStack {
 	}
 
 	saveCache() {
+		userCache.changes = {};
+		[...$(".show_trash")].forEach(li => {
+			let ind = li.querySelector("div").getAttribute("data-ind");
+			userCache.changes[ind] = li.children[1].innerText;
+		});
 		userCache.undo = this.undo.slice();
 		userCache.redo = this.redo.slice();
-		setCache("userCache");
+		setCache(hostname);
 	}
 
 	deleteAll() {

@@ -92,13 +92,10 @@ const changeIndDp = dragItem => {
 		let prev_txt = drop_li_p[1].innerText;
 		drop_li_p[1].innerText = dragItem.text();
 		temp_ki_pairs[ind] = { key: dragItem.text(), ind };
+
 		$(drop_li_p[2].children[0]).attr("src", "images/main/trash.png"); //li > div > img
 		addTrashListener(drop_li_p[2]);
-		//* Undo Redo stuff
-		changes.Add(ind, prev_txt);
 
-		userCache?.changes ? 0 : (userCache.changes = {});
-		userCache.changes[ind] = dragItem.text();
-		setCache(hostname);
+		changes.Add(ind, prev_txt);
 	}
 };

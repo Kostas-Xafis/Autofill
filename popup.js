@@ -19,9 +19,14 @@ chrome.runtime.onMessage.addListener(async message => {
 			$("#fill_ul, #uData ul").css("align-content", "initial");
 			console.log(err);
 		}
+		window.requestAnimationFrame(() => {
+			document.body.style.width = "399px";
+			window.requestAnimationFrame(() => (document.body.style.width = "400px"));
+		}); // ! For some reason there a small space in the left
 	} else if (message.msg === "Input_ind") {
 		createIndexDropdown(message.inputs);
 	}
+
 	console.log(message.msg);
 });
 
@@ -68,12 +73,11 @@ const changeKeysDropdown = () => {
 //Index of inputs dropdown
 const createIndexDropdown = inputsArr => {
 	inputs = inputsArr;
-	let $dp = $("#indexes ul");
+	const $dp = $("#indexes ul");
+	const changes = userCache.changes;
 	Object.entries(inputsArr).forEach(([i, { id, index }]) => {
-		const change = userCache?.changes?.[i] ? userCache.changes[i] : "";
+		const change = changes?.[i] ? changes[i] : "";
 		let li = $("<li>").addClass("indexes_li");
-		if (change != "") li.addClass("show_trash");
-
 		let p = $("<p>").addClass("index").text(`${index}.`).appendTo(li.appendTo($dp));
 		p.after($("<p>").text(change));
 
@@ -82,10 +86,12 @@ const createIndexDropdown = inputsArr => {
 		let div = $("<div>").attr("data-ind", index);
 		img.appendTo(div.appendTo(p.parent()));
 		if (change != "") {
+			li.addClass("show_trash");
 			img.attr("src", "/images/main/trash.png");
 			addTrashListener(div[0]);
 		}
 	});
+
 	$("#indexes ul li").fadeOut(10);
 };
 

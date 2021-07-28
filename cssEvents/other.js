@@ -26,7 +26,7 @@ function trashHandler(e) {
 	changes.Add(ind, span.innerText);
 	span.innerText = "";
 
-	delete userCache.changes[ind + 1];
+	delete userCache.changes[ind];
 	setCache(hostname);
 	li.classList.remove("show_trash");
 	div.removeEventListener("click", trashHandler);

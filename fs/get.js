@@ -34,6 +34,7 @@ const getJson = async () => {
 			],
 			multiple: true
 		});
+		let i = 0;
 		for (const fileHandle of fileHandles) {
 			const file_blob = await fileHandle.getFile();
 			const file_extension = file_blob.name.match(/\.[^.]+$/)[0];
@@ -44,6 +45,7 @@ const getJson = async () => {
 				const { default: readXLSXdata } = await import("./readxls.js");
 				file_reader = async () => await readXLSXdata(file_blob);
 			}
+			i++;
 			await appendJson(await file_reader(), i == fileHandles.length);
 		}
 	} catch (err) {

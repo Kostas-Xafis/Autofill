@@ -3,7 +3,7 @@ $(document)
 	.on("dragover", e => e.preventDefault())[0]
 	.addEventListener("drop", dropFile);
 
-const appendJson = async (new_data, reset = true) => {
+const appendJson = async (new_data, animate = true) => {
 	let file_exists = jsonData?.ki_pairs ? true : false;
 	//* If the user hasn't uploaded any data yet just create a new file
 	if (!file_exists) {
@@ -20,7 +20,7 @@ const appendJson = async (new_data, reset = true) => {
 	}
 	create_keyid_pairs();
 
-	if (!reset) return;
+	if (!animate) return;
 	try {
 		await createFile(JSON.stringify(jsonData, null, 2));
 
@@ -29,9 +29,9 @@ const appendJson = async (new_data, reset = true) => {
 		if (act_clicked) {
 			OpenActions();
 			setTimeout(create_new_dps, 400);
-		} else if (expanded) {
+		} else {
 			create_new_dps();
-			$(".keys_li").each((ind, elem) => $(elem).fadeIn(get_fade_in_rate(ind)));
+			if (expanded) $(".keys_li").each((ind, elem) => $(elem).fadeIn(get_fade_in_rate(ind)));
 		}
 	} catch (err) {}
 };

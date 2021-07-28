@@ -51,9 +51,7 @@ const loadPrefs = () => {
 	document.body.style.height = extCache.height;
 	changes.init([userCache.undo, userCache.redo]);
 	function openSwitches(id) {
-		let $switch = document.getElementById(id);
-		$switch.querySelector(".swTrack").style.opacity = "1";
-		$switch.querySelector(".swBall").style.transform = "translate(42px, -1.5px)";
+		document.getElementById(id).classList.add("swTrackOpen");
 	}
 	if (extCache.darkMode) {
 		//Dark mode on
